@@ -24,16 +24,9 @@ module Scrapper
     provincia = CodigoProvincia[parameters[:provincia]] || "%"
     regimen = CodigoRegimen[parameters[:regimen]] || "%"
 
-		puts
-		$stdout.print "PROCESANDO:"
-    $stdout.print "#{parameters[:nivel]} " if !nivel.nil?
-		$stdout.print "#{parameters[:provincia]} " if !provincia.nil?
-		$stdout.print "#{parameters[:regimen]} " if !regimen.nil?
-    puts
-
     page = agent.post URL, :cnivel => nivel, :cprov => provincia, :cregimen => regimen
-
-    schools = []
+    
+		schools = []
     page.search("div#contenidoInferior tr[valign='top']").each do |row|
       school = {}
       #school[:niveles] = [parameters[:nivel]] unless nivel == "%"

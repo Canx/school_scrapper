@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'spec_helper'
 
 describe Scrapper do
@@ -8,40 +10,38 @@ describe Scrapper do
       end
     end 
 
-		after(:all) do
-		  # TODO: delete export directory and all files inside	
-		end
+		# TODO: delete export directory and all files inside	
 
     it "should return all schools from that level" do
       @schools.size.should eq(36)
     end
 
 		it "should return correct name school" do
-      pending
+			@schools[0][:nombre].should eq("CENTRE EDUCACIÓ INFANTIL MOBY DICK")
 		end
 
 		it "should return correct web page school" do
-      pending
+      @schools[4][:web].should eq("http://www.fomento.edu/torrenova/")
 	  end
 
 		it "should return correct address school" do
-			pending
+			@schools[0][:direccion].should eq("C. VALENCIA, PARTIDA SOLAES, 810")
 		end
 
 		it "should return correct phone school" do
-			pending
+			@schools[0][:telefono].should eq("649460442")
 		end
 
 		it "should return correct city school" do
-		  pending
+		  @schools[0][:ciudad].should eq("BENICARLÓ")
 		end
 
 		it "should return correct postal code school" do
-			pending
+			@schools[0][:cp].should eq("12580")
 		end
 
 		it "should return correct code school" do
-			pending
+			@schools[0][:codigo].should eq("12007243")
 		end
 
     it "should return schools with the correct levels (1)" do
@@ -65,7 +65,8 @@ describe Scrapper do
     end
     
     it "should return bachiller sublevels" do
-      pending
+			bachiller_sublevels = Set.new [:bachiller_ciencias, :bachiller_humanidades]
+      bachiller_sublevels.subset?(@schools[0][:niveles].to_set).should eq(true)
     end
   end
 end
