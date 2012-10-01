@@ -4,6 +4,7 @@ require 'rubygems'
 require 'rspec'
 require 'vcr'
 require 'scrapper'
+require 'fakefs/spec_helpers'
 
 VCR.configure do |c|
   c.cassette_library_dir = 'spec/cassettes'

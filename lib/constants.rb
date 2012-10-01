@@ -3,21 +3,7 @@
 module Constants
   URL_BASE = "http://www.cefe.gva.es/ocd/areacd/val/"
   URL = "#{URL_BASE}niveles_ens.asp"
-
-  Niveles =  {
-             :guarderia  => ["Guarderia", nil],
-             :infantil   => ["Infantil", nil],
-             :primaria   => ["Primaria", nil],
-             :eso        => ["ESO", nil],
-             :eso_2ciclo => ["ESO 2do ciclo", :eso],
-             :eso_1ciclo => ["ESO 1er ciclo", :eso],
-             :bachiller  => ["Bachiller", nil],
-             :bachiller_ciencias => ["Bachiller: Ciencias y tecnologia", :bachiller],
-             :bachiller_humanidades => ["Bachiller: Humanidades y ciencias sociales", :bachiller],
-             :bachiller_artes_plasticas => ["Bachiller: Artes plásticas, diseño y imagen", :bachiller],
-             :bachiller_artes_escenicas => ["Bachiller: Artes escénicas, música y danza", :bachiller],
-             :fp         => ["Formacion Profesional", nil]
-            }
+	SAVED_FILES = "export"
 
   DescNiveles = {
              :guarderia => "EDUCACIÓ INFANTIL PRIMER CICLE",

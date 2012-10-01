@@ -3,14 +3,18 @@
 require "rubygems"
 require "mechanize"
 require "yaml"
-require "constants"
+require_relative "constants"
 
 module Scrapper
   include Constants
 
   def Scrapper.save(schools, parameters)
-    filename = "#{parameters[:nivel].to_s}.yml"
-    File.open(filename, "w") { |f| f.write(schools.to_yaml) }
+    filename = "#{parameters[:provincia].to_s}#{parameters[:nivel].to_s}#{parameters[:regimen]}.yml"
+		# TODO: create export directory if doesn't exist
+		if !Dir.exist?("#{SAVED_FILES}")
+			Dir.mkdir("#{SAVED_FILES}")
+		end
+    File.open("#{SAVED_FILES}/#{filename}", "w") { |f| f.write(schools.to_yaml) }
   end
 
   def Scrapper.scrap(parameters)
@@ -19,6 +23,13 @@ module Scrapper
     nivel = CodigoNivel[parameters[:nivel]] || "%"
     provincia = CodigoProvincia[parameters[:provincia]] || "%"
     regimen = CodigoRegimen[parameters[:regimen]] || "%"
+
+		puts
+		$stdout.print "PROCESANDO:"
+    $stdout.print "#{parameters[:nivel]} " if !nivel.nil?
+		$stdout.print "#{parameters[:provincia]} " if !provincia.nil?
+		$stdout.print "#{parameters[:regimen]} " if !regimen.nil?
+    puts
 
     page = agent.post URL, :cnivel => nivel, :cprov => provincia, :cregimen => regimen
 
@@ -54,7 +65,6 @@ module Scrapper
 
     # tipos bachiller
     page.search("div#secc2 td:first-child").each do |cell|
-      pp cell.text
       if DescNiveles.has_value?(cell.text) then
         levels << DescNiveles.key(cell.text)
       end
@@ -84,5 +94,3 @@ module Scrapper
   end
 
 end
-
-#shools = Scrapper.scrap(:level => :eso, :prov => :castellon}
