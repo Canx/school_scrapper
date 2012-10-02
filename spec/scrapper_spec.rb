@@ -10,7 +10,7 @@ describe Scrapper do
       end
     end 
 
-		# TODO: delete export directory and all files inside	
+		# TODO: delete export directory and all files inside after tests
 
     it "should return all schools from that level" do
       @schools.size.should eq(36)
@@ -51,6 +51,11 @@ describe Scrapper do
     it "should return schools with the correct levels (2)" do
       @schools[34][:niveles].should eq([:fp, :guarderia, :infantil, :primaria, :eso])
     end
+
+		it "should return gps coordinates" do
+			@schools[0][:latitud].should eq("40.409346")
+			@schools[0][:longitud].should eq("0.42233")
+		end
 
     it "should create a file named guarderia_castellon_privado.yml" do
 			File.exists?("#{Scrapper::SAVED_FILES}/castellonguarderiaprivado.yml").should eq(true)
