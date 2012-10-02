@@ -79,10 +79,19 @@ module Scrapper
       school[:email] = email_search.parent["href"].sub("mailto:","").strip
     end
 
+    # TODO: latitud y longitud 
+    latitud_search = page.search("div.nivelCentro table:nth-child(4) tr:nth-child(6) td:nth-child(3) div span").text
+		if !latitud_search.nil?
+			school[:latitud] = latitud_search
+		end
+
+		longitud_search = page.search("div.nivelCentro table:nth-child(4) tr:nth-child(6) td:nth-child(4) div span").text
+		if !longitud_search.nil?
+			school[:longitud] = longitud_search
+		end
+
     school[:niveles] = scrap_levels(page)
 
-    # TODO: latitud y longitud 
-    # latitude_search = page.search
     return school
   end
 
