@@ -45,11 +45,11 @@ describe Scrapper do
 		end
 
     it "should return schools with the correct levels (1)" do
-      @schools[5][:niveles].should eq([:especial,:guarderia,:infantil,:primaria,:eso])
+      @schools[5][:niveles].should include(:especial,:guarderia,:infantil,:primaria,:eso)
     end
 
     it "should return schools with the correct levels (2)" do
-      @schools[34][:niveles].should eq([:fp, :guarderia, :infantil, :primaria, :eso])
+      @schools[34][:niveles].should include(:fp, :guarderia, :infantil, :primaria, :eso)
     end
 
 		it "should return gps coordinates" do
@@ -72,6 +72,18 @@ describe Scrapper do
     it "should return bachiller sublevels" do
 			bachiller_sublevels = Set.new [:bachiller_ciencias, :bachiller_humanidades]
       bachiller_sublevels.subset?(@schools[0][:niveles].to_set).should eq(true)
+    end
+  end
+
+	context "given a query to fp level" do
+    before(:all) do
+      VCR.use_cassette "fp" do
+        @schools = Scrapper::scrap(:nivel => :fp, :provincia => :valencia, :regimen => :publico)
+      end
+    end
+
+    it "should return 'GESTIÓ ADMINISTRATIVA' sublevel" do
+      @schools[11][:niveles].should include(:fp_ciclo_gestion_administrativa)
     end
   end
 end

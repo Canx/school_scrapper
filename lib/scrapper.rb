@@ -49,17 +49,19 @@ module Scrapper
   def Scrapper.scrap_levels(page)
     levels = []
 
-    #niveles básicos
-    page.search("div#secc1 td:first-child").each do |cell|
-      if DescNiveles.has_value?(cell.text) then
-        levels << DescNiveles.key(cell.text)
-      end
-    end
+    path_levels = {basic: "div#secc1 div.nivelCentro table:first td:first-child",
+                   bachiller: "div#secc2 div.nivelCentro table:first td:first-child",
+                   fp_familia: "div#secc3 div.nivelCentro > table:first tr:nth-child(2) td:first",
+                   fp_ciclo: "div#secc3 div.nivelCentro > table:first tr:nth-child(2) td:nth-child(2)"}
 
-    # tipos bachiller
-    page.search("div#secc2 td:first-child").each do |cell|
-      if DescNiveles.has_value?(cell.text) then
-        levels << DescNiveles.key(cell.text)
+     path_levels.each do |level, level_path|
+      results = page.search(level_path)
+      results.each do |cell|
+        if DescNiveles.has_value?(cell.text) then
+          levels << DescNiveles.key(cell.text)
+        else
+          raise "Nivel #{cell.text} no encontrado. #{level}"
+        end
       end
     end
 
@@ -79,7 +81,6 @@ module Scrapper
       school[:email] = email_search.parent["href"].sub("mailto:","").strip
     end
 
-    # TODO: latitud y longitud 
     latitud_search = page.search("div.nivelCentro table:nth-child(4) tr:nth-child(6) td:nth-child(3) div span").text
 		if !latitud_search.nil?
 			school[:latitud] = latitud_search
