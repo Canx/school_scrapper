@@ -8,16 +8,21 @@ require_relative "constants"
 module Scrapper
   include Constants
 
+  def Scrapper.filename(parameters)
+    "#{parameters[:provincia].to_s}#{parameters[:nivel].to_s}#{parameters[:regimen]}.yml"
+  end
+
   def Scrapper.save(schools, parameters)
-    filename = "#{parameters[:provincia].to_s}#{parameters[:nivel].to_s}#{parameters[:regimen]}.yml"
 		# TODO: create export directory if doesn't exist
 		if !Dir.exist?("#{SAVED_FILES}")
 			Dir.mkdir("#{SAVED_FILES}")
 		end
-    File.open("#{SAVED_FILES}/#{filename}", "w") { |f| f.write(schools.to_yaml) }
+    File.open("#{SAVED_FILES}/#{filename(parameters)}", "w") { |f| f.write(schools.to_yaml) }
   end
 
   def Scrapper.scrap(parameters)
+    #return if File.exist?("#{SAVED_FILES}/#{filename(parameters)}")
+
     agent = Mechanize.new
 
     nivel = CodigoNivel[parameters[:nivel]] || "%"
@@ -28,21 +33,22 @@ module Scrapper
     
 		schools = []
     page.search("div#contenidoInferior tr[valign='top']").each do |row|
-      school = {}
+      @school = {}
       #school[:niveles] = [parameters[:nivel]] unless nivel == "%"
-      school[:provincia] = parameters[:provincia] unless provincia == "%"
-      school[:regimen] = parameters[:regimen] unless regimen == "%"
-      school[:codigo] = row.children[0].text.strip
-      school[:link] = "#{URL_BASE}#{row.children[0].at_css("a")["href"]}"
-      school[:nombre] = row.children[2].text.strip
-      #school[:regimen] = row.children[4].text.strip
-      school[:direccion] = row.children[6].text.strip
-      school[:cp],school[:ciudad] = row.children[8].text.strip.split(/\s* - \s*/)
-      school[:telefono] = row.children[10].text.strip
-      school = school.merge(scrap_school(agent, school[:link]))
-      schools << school
+      @school[:provincia] = parameters[:provincia] unless provincia == "%"
+      @school[:codigo] = row.children[0].text.strip
+      @school[:link] = "#{URL_BASE}#{row.children[0].at_css("a")["href"]}"
+      @school[:nombre] = row.children[2].text.strip
+      @school[:publico] = row.children[4].text.strip == "PUB."
+      @school[:direccion] = row.children[6].text.strip
+      @school[:cp],@school[:ciudad] = row.children[8].text.strip.split(/\s* - \s*/)
+      @school[:telefono] = row.children[10].text.strip
+      @school = @school.merge(scrap_school(agent, @school[:link]))
+      print "."
+      schools << @school
     end
     save(schools, parameters)
+    puts
     return schools
   end
 
@@ -51,9 +57,8 @@ module Scrapper
 
     path_levels = {basic: "div#secc1 div.nivelCentro table:first td:first-child",
                    bachiller: "div#secc2 div.nivelCentro table:first td:first-child",
-                   fp_familia: "div#secc3 div.nivelCentro > table:first tr:nth-child(2) td:first",
-                   fp_ciclo: "div#secc3 div.nivelCentro > table:first tr:nth-child(2) td:nth-child(2)"}
-
+                   fp_ciclo: "div#secc3 div.nivelCentro > table:first tr:nth-child(n+2) td:nth-child(2)"}
+                   #fp_familia: "div#secc3 div.nivelCentro > table:first tr:nth-child(n+2) td:first",
      path_levels.each do |level, level_path|
       results = page.search(level_path)
       results.each do |cell|

@@ -86,4 +86,33 @@ describe Scrapper do
       @schools[11][:niveles].should include(:fp_ciclo_gestion_administrativa)
     end
   end
+
+  context "given all fp levels" do
+    before(:all) do
+      VCR.use_cassette "all_fp" do
+        @schools = Scrapper::scrap(:nivel => :fp)
+      end
+    end
+
+    it "should verify IES ABASTOS fp cicles" do
+      @schools.each_with_index do |school,index|
+        if school[:nombre] == "INSTITUT EDUCACIÓ SECUNDÀRIA ABASTOS"
+          school[:niveles].should include(:fp_ciclo_gestion_administrativa, 
+                                          :fp_ciclo_finanzas,
+                                          :fp_ciclo_comercio,
+                                          :fp_ciclo_logistica,
+                                          :fp_ciclo_comercio_internacional,
+                                          :fp_ciclo_DAM,
+                                          :fp_ciclo_SMR,
+                                          :fp_ciclo_ASIR,
+                                          :fp_ciclo_DAW
+                                         )
+        end
+      end
+    end
+
+    it "should get the public status" do
+      @schools[0][:publico].should be(true)
+    end
+  end
 end
