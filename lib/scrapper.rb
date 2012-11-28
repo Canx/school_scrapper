@@ -86,6 +86,14 @@ module Scrapper
       school[:email] = email_search.parent["href"].sub("mailto:","").strip
     end
 
+    school[:calidad] = 0
+    quality1_search = page.search("img[src='../images/medalla1.png']")[0]
+    quality2_search = page.search("img[src='../images/medalla2.png']")[0]
+    quality3_search = page.search("img[src='../images/medalla3.png']")[0]
+    school[:calidad] = 1 if !quality1_search.nil?
+    school[:calidad] = 2 if !quality2_search.nil?
+    school[:calidad] = 3 if !quality3_search.nil?
+
     latitud_search = page.search("div.nivelCentro table:nth-child(4) tr:nth-child(6) td:nth-child(3) div span").text
 		if !latitud_search.nil?
 			school[:latitud] = latitud_search
