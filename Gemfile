@@ -5,3 +5,4 @@ gem 'rspec'
 gem 'vcr'
 gem 'fakeweb'
 gem "fakefs", :require => "fakefs/safe"
+gem "debugger"

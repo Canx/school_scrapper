@@ -2,7 +2,7 @@ require "vcr"
 require_relative "../lib/scrapper.rb"
 
 provincia = [:castellon, :valencia, :alicante]
-niveles = [:guarderia, :infantil, :primaria, :especial, :eso, :bachiller, :fp]
+niveles = [:infantil_1, :infantil_2, :primaria, :eso, :bachiller, :fp, :especial] 
 regimen = [:publico, :privado]
 
 VCR.configure do |c|

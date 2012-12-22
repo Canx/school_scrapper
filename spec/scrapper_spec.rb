@@ -3,34 +3,60 @@
 require 'spec_helper'
 
 describe Scrapper do
+  context "given a query to a specific school" do
+    before(:all) do
+      VCR.use_cassette "mobydick" do
+        @school = Scrapper::scrap(:codigo => 12007243)
+      end
+    end
+
+    it "should get the correct name" do
+      @school[:name].should eq("MOBY DICK")
+    end
+
+    it "should get the correct web page" do
+      @school[:web].should eq(nil)
+    end
+
+    it "should get the correct address" do
+      @school[:direccion].should eq("Carrer VALENCIA, PARTIDA SOLAES, 810")
+    end
+
+    it "should return correct phone school" do
+			@school[:telefono].should eq("964472960")
+		end
+
+
+  end
+
+  context "given a query to a escuela hogar" do
+    before(:all) do
+      VCR.use_cassette "escuelahogar" do
+        @school = Scrapper::scrap(:codigo => "12001915")
+      end
+    end
+
+    it "should get no levels" do
+      @school[:niveles].should eq([])
+    end
+  end
+
   context "given a query to guarderia level" do 
     before(:all) do
       VCR.use_cassette "guarderia" do
-        @schools = Scrapper::scrap(:nivel => :guarderia, :provincia => :castellon, :regimen => :privado)
+        @schools = Scrapper::scrap(:nivel => :infantil_1, :provincia => :castellon, :regimen => :privado)
       end
     end 
 
 		# TODO: delete export directory and all files inside after tests
 
     it "should return all schools from that level" do
-      @schools.size.should eq(36)
+      @schools.size.should eq(37)
     end
-
-		it "should return correct name school" do
-			@schools[0][:nombre].should eq("CENTRE EDUCACIÓ INFANTIL MOBY DICK")
-		end
 
 		it "should return correct web page school" do
       @schools[4][:web].should eq("http://www.fomento.edu/torrenova/")
 	  end
-
-		it "should return correct address school" do
-			@schools[0][:direccion].should eq("C. VALENCIA, PARTIDA SOLAES, 810")
-		end
-
-		it "should return correct phone school" do
-			@schools[0][:telefono].should eq("649460442")
-		end
 
 		it "should return correct city school" do
 		  @schools[0][:ciudad].should eq("BENICARLÓ")
@@ -45,11 +71,11 @@ describe Scrapper do
 		end
 
     it "should return schools with the correct levels (1)" do
-      @schools[5][:niveles].should include(:especial,:guarderia,:infantil,:primaria,:eso)
+      @schools[5][:niveles].should include(:especial,:infantil_1,:infantil_2,:primaria,:eso)
     end
 
     it "should return schools with the correct levels (2)" do
-      @schools[34][:niveles].should include(:fp, :guarderia, :infantil, :primaria, :eso)
+      @schools[34][:niveles].should include(:fp, :infantil_1, :infantil_2, :primaria, :eso)
     end
 
 		it "should return gps coordinates" do
@@ -58,7 +84,7 @@ describe Scrapper do
 		end
 
     it "should create a file named guarderia_castellon_privado.yml" do
-			File.exists?("#{Scrapper::SAVED_FILES}/castellonguarderiaprivado.yml").should eq(true)
+			File.exists?("#{Scrapper::SAVED_FILES}/castelloninfantil_1privado.yml").should eq(true)
     end
   end
 

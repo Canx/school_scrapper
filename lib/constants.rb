@@ -1,13 +1,13 @@
 # encoding: utf-8
 
 module Constants
-  URL_BASE = "http://www.cefe.gva.es/ocd/areacd/val/"
+  URL_BASE = "http://www.cece.gva.es/ocd/areacd/val/"
   URL = "#{URL_BASE}niveles_ens.asp"
 	SAVED_FILES = "export"
 
   DescNiveles = {
-             :guarderia => "EDUCACIÓ INFANTIL PRIMER CICLE",
-             :infantil => "EDUCACIÓ INFANTIL SEGON CICLE",
+             :infantil_1 => "EDUCACIÓ INFANTIL PRIMER CICLE",
+             :infantil_2 => "EDUCACIÓ INFANTIL SEGON CICLE",
              :parvulos => "PREESCOLAR COL·LEGI DE PÀRVULS",
              :primaria => "EDUCACIÓ PRIMÀRIA",
              :especial => "EDUCACIÓ ESPECIAL",
@@ -169,12 +169,18 @@ module Constants
              :fp_ciclo_produccion_indust_grafica => "PRODUCCIÓ EN INDUSTRIES D'ARTS GRÀFIQUES",
              :fp_ciclo_instal_electrotecnicas => "INSTAL·LACIONS ELECTROTÈCNIQUES",
              :fp_ciclo_proyectos_construccion => "DESENVOLUPAMENT I APLICACIÓ DE PROJECTES DE CONSTRUCCIÓ",
-             :escuelas_musica => "ESCOLES DE MÚSICA"
+             :escuelas_musica => "ESCOLES DE MÚSICA",
+             :ens_prof_musica => "ENSENYANCES PROFESSIONALS DE MÚSICA   ",
+             :ens_elem_musica => "ENSENYANCES ELEMENTALS DE MÚSICA   ",
+             :ens_sup_musica => "ENSENYANCES SUPERIORS DE MÚSICA   ",
+             :fp_ciclos_artes_plasticas => "CICLES FORMATIUS D'ARTS PLÀSTIQUES I DISSENY   ",
+             :est_sup_artes_plasticas => "ESTUDIS SUPERIORS D'ARTS PLÀSTIQUES I DISSENY   ",
+             :idiomas => "IDIOMES   "
                 }
 
   CodigoNivel = {
-                 :guarderia => "10",
-                 :infantil => "11",
+                 :infantil_1 => "10",
+                 :infantil_2 => "11",
                  :primaria => "12",
                  :eso => "13",
                  :eso_1ciclo => "53",
