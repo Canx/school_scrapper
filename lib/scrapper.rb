@@ -48,11 +48,11 @@ module Scrapper
     page.search("div#contenidoInferior tr[valign='top']").each do |row|
       @school = {}
       #school[:niveles] = [parameters[:nivel]] unless nivel == "%"
-      @school[:provincia] = provincia unless provincia == "%"
+      @school[:provincia] = CodigoProvincia.key(provincia) unless provincia == "%"
       @school[:codigo] = row.children[0].text.strip
       @school[:link] = "#{URL_BASE}#{row.children[0].at_css("a")["href"]}"
-      @school[:nombre] = row.children[2].text.strip
-      @school[:publico] = row.children[4].text.strip == "PUB."
+      #@school[:nombre] = row.children[2].text.strip
+      #@school[:publico] = row.children[4].text.strip == "PUB."
       @school[:direccion] = row.children[6].text.strip
       @school[:cp],@school[:ciudad] = row.children[8].text.strip.split(/\s* - \s*/)
       @school[:telefono] = row.children[10].text.strip
@@ -67,14 +67,14 @@ module Scrapper
   def Scrapper.scrap_levels(page)
     levels = []
 
-    path_levels = {basic: "div#secc1 div.nivelCentro table > th:first td~td:first-child",
+    path_levels = {basic: "div#secc1 div.nivelCentro table tr td:first:not(:last)",
                    bachiller: "div#secc2 div.nivelCentro table:first td:first-child",
                    fp_ciclo: "div#secc3 div.nivelCentro > table:first tr:nth-child(n+2) td:nth-child(2)"}
                    #fp_familia: "div#secc3 div.nivelCentro > table:first tr:nth-child(n+2) td:first",
      path_levels.each do |level, level_path|
       results = page.search(level_path)
       results.each do |cell|
-        content = cell.text
+        content = cell.text.strip
         if DescNiveles.has_value?(content) then
           levels << DescNiveles.key(content)
         else
@@ -90,9 +90,27 @@ module Scrapper
     school = {}
     page = agent.get url
 
-    school[:name] = page.search("div.nivelCentro table:first tr:first td:first span.Estilo1").children[2].text.lstrip
-    school[:direccion] = page.search("div.nivelCentro table:nth-child(4) tr:first td:nth-child(3) span.Estilo1").text
-    school[:telefono] = page.search("div.nivelCentro table:nth-child(4) tr:nth-child(2) td:nth-child(2) span.Estilo1").text.delete(" ")
+    school[:codigo] = page.search("div.nivelCentro:first table:first tr:nth-child(2) td:first").text.split(":")[1].lstrip
+
+    regimen = page.search("div.nivelCentro:first table:first tr:nth-child(2) td:nth-child(2)").text.split(":")[1].strip
+  
+    if DescRegimen.has_value?(regimen) then
+      school[:regimen] = DescRegimen.key(regimen)
+    else
+      raise "Regimen '#{regimen}' no encontrado."
+    end
+
+    name = page.search("div.nivelCentro:first table:first tr:first td:first span.Estilo1").children[2]
+    school[:nombre] = name.nil? ? "" : name.text.lstrip
+
+    school[:direccion] = page.search("div.nivelCentro:first table:nth-child(4) tr:first td:nth-child(3) span.Estilo1").text
+
+    school[:telefono] = page.search("div.nivelCentro:first table:nth-child(4) tr:nth-child(2) td:nth-child(2) span.Estilo1").text.delete(" ")
+
+    school[:ciudad] = page.search("div.nivelCentro table:nth-child(4) tr:nth-child(5) td:nth-child(2) span.Estilo1").text.gsub(/.*-/,"").lstrip
+
+    school[:cp] = page.search("div.nivelCentro table:nth-child(4) tr:nth-child(5) td:nth-child(2) span.Estilo1").text.gsub(/-.*/,"").strip
+
     web_search = page.search("img[src='../images/INTErnet.gif']")[0]
     if !web_search.nil?
       school[:web] = web_search.parent["href"].strip

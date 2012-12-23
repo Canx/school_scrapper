@@ -6,6 +6,7 @@ module Constants
 	SAVED_FILES = "export"
 
   DescNiveles = {
+             :jardin_inf => "PREESCOLAR-JARDÍ D'INFÀNCIA",
              :infantil_1 => "EDUCACIÓ INFANTIL PRIMER CICLE",
              :infantil_2 => "EDUCACIÓ INFANTIL SEGON CICLE",
              :parvulos => "PREESCOLAR COL·LEGI DE PÀRVULS",
@@ -199,4 +200,10 @@ module Constants
                  :publico => "1",
                  :privado => "2"
                   }
+                 
+  DescRegimen = {
+                 :publico => "PÚBLIC",
+                 :privado => "PRIVAT",
+                 :concertado => "PRIVAT - CONCERTAT"
+                }
 end
