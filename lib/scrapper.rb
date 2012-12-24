@@ -4,7 +4,6 @@ require "rubygems"
 require "mechanize"
 require "yaml"
 require "debugger"
-
 require_relative "constants"
 
 module Scrapper
@@ -50,15 +49,20 @@ module Scrapper
       #school[:niveles] = [parameters[:nivel]] unless nivel == "%"
       @school[:provincia] = CodigoProvincia.key(provincia) unless provincia == "%"
       @school[:codigo] = row.children[0].text.strip
+      puts @school[:codigo]
       @school[:link] = "#{URL_BASE}#{row.children[0].at_css("a")["href"]}"
-      #@school[:nombre] = row.children[2].text.strip
+      @school[:nombre] = row.children[2].text.strip
       #@school[:publico] = row.children[4].text.strip == "PUB."
       @school[:direccion] = row.children[6].text.strip
       @school[:cp],@school[:ciudad] = row.children[8].text.strip.split(/\s* - \s*/)
       @school[:telefono] = row.children[10].text.strip
-      @school = @school.merge(scrap_school(agent, @school[:link]))
-      print "."
-      schools << @school
+      detailed_data = scrap_school(agent, @school[:link])
+
+      if !detailed_data.nil?
+        @school = @school.merge(detailed_data) 
+        print "."
+        schools << @school
+      end
     end
 
     return schools
@@ -90,18 +94,21 @@ module Scrapper
     school = {}
     page = agent.get url
 
+    # TODO: check if school exists
+    error_search = page.search("img[src='../images/atencion2.gif']")[0]
+    return nil if !error_search.nil?
+
     school[:codigo] = page.search("div.nivelCentro:first table:first tr:nth-child(2) td:first").text.split(":")[1].lstrip
 
-    regimen = page.search("div.nivelCentro:first table:first tr:nth-child(2) td:nth-child(2)").text.split(":")[1].strip
-  
+    regimen = page.search("div.nivelCentro:first table:first tr:nth-child(2) td:nth-child(2)").text.split(":")[1].gsub(/ /,"").gsub(/\u000A/,"").gsub(/\u000D/,"").strip
     if DescRegimen.has_value?(regimen) then
       school[:regimen] = DescRegimen.key(regimen)
     else
-      raise "Regimen '#{regimen}' no encontrado."
+      raise "Regimen \"#{regimen}\" no encontrado."
     end
 
     name = page.search("div.nivelCentro:first table:first tr:first td:first span.Estilo1").children[2]
-    school[:nombre] = name.nil? ? "" : name.text.lstrip
+    school[:nombre] = name.text.lstrip if !name.nil?
 
     school[:direccion] = page.search("div.nivelCentro:first table:nth-child(4) tr:first td:nth-child(3) span.Estilo1").text
 

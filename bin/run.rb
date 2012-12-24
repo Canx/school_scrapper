@@ -12,10 +12,10 @@ VCR.configure do |c|
 end
 
 
-VCR.use_cassette "all" do
-  provincia.each do |p|
-    niveles.each do |n|
-      regimen.each do |r|
+provincia.each do |p|
+  niveles.each do |n|
+    regimen.each do |r|
+      VCR.use_cassette "#{p.to_s}#{n.to_s}#{r.to_s}" do
         puts "scraping #{p.to_s} #{n.to_s} #{r.to_s}"
         Scrapper::scrap(nivel: n, provincia: p, regimen: r)
       end

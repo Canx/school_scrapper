@@ -204,6 +204,7 @@ module Constants
   DescRegimen = {
                  :publico => "PÚBLIC",
                  :privado => "PRIVAT",
-                 :concertado => "PRIVAT - CONCERTAT"
+                 :concertado_privado => "PRIVAT - CONCERTAT",
+                 :concertado_publico => "PÚBLIC - CONCERTAT",
                 }
 end

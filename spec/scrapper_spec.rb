@@ -85,6 +85,29 @@ describe Scrapper do
     end
   end
 
+  context "concertado" do
+    before(:all) do
+      VCR.use_cassette "concertado" do
+        @school = Scrapper::scrap(:codigo => "12005349")
+      end
+    end
+
+    it "should get correct regime" do
+      @school[:regimen].should eq(:concertado_privado)
+    end
+  end
+
+  context "no_existente" do
+    before(:all) do
+      VCR.use_cassette "no_existente" do
+        @school = Scrapper::scrap(:codigo => "03018258")
+      end
+    end
+
+    it "should get no school" do
+      @school.should eq(nil)
+    end
+  end
 #	context "given a query to fp level" do
 #    before(:all) do
 #      VCR.use_cassette "fp" do
